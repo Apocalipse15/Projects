@@ -19,7 +19,7 @@ struct Task *getTasksArray() {
 }
 
 // LinkedList functions
-void append(struct Node** head, char* name) {
+void append(struct Task** head, char* name) {
     struct Task* newTaks = malloc(sizeof(struct Task));
     newTaks->name = name;
     newTaks->done = 0;
@@ -35,6 +35,30 @@ void append(struct Node** head, char* name) {
         temp = temp->next;
     }
     temp->next = newTaks;
+}
+
+void removeNode(struct Task **head, char* name) {
+    struct Task *temp = *head, *prev = NULL;
+
+    if (temp != NULL && temp->name == name) {
+        *head = temp->next;
+        free(temp);
+        return;
+    }
+
+    while (temp != NULL && temp->name != name) {
+        prev = temp;
+        temp = temp->next;
+    }
+
+    if (temp == NULL) {
+        printf("Value %d not found in the list.\n", name);
+        return;
+    }
+
+    // Unlink the node from the list
+    prev->next = temp->next;
+    free(temp);
 }
 
 int main(void){
@@ -57,12 +81,8 @@ int main(void){
         char *command = (char*)malloc(1024 * sizeof(char));
         fgets(buffer, 1024, stdin);
         strcpy(command, buffer);
-        printf("You entered: %s\n", buffer);
         
         char *firstWord = strtok(buffer, " ,.!?");
-
-        removeNulls(buffer);
-        printf("You entered: %s\n", command);
 
         if (firstWord != NULL) { 
             printf("The first word is: %s\n", firstWord); 
@@ -73,15 +93,24 @@ int main(void){
         if (strcmp(firstWord, "add") == 0) {
             printf("Adding a new task\n");
             printf("The task is: %s\n", command + strlen(firstWord) + 1);
+            append(&head, command + strlen(firstWord) + 1);
         }
         else if (strcmp(firstWord, "remove") == 0) {
-            printf("Removing a task\n");
+            printf("Removing task: %s\n", command + strlen(firstWord) + 1);
+            removeNode(&head, command + strlen(firstWord) + 1);
         }
         else if (strcmp(firstWord, "done") == 0) {
             printf("Marking a task as done\n");
         }
-        else if (strcmp(firstWord, "list") == 0) {
+        else if (strcmp(firstWord, "list\n") == 0) {
             printf("Listing all active tasks\n");
+            struct Task* temp = head;
+            while (temp) {
+                printf("Name: %s", temp->name);
+                printf("Done: %d\n", temp->done);
+                printf("---------------------------------\n");
+                temp = temp->next;
+            }
         }
         else if (strcmp(firstWord, "listold") == 0) {
             printf("Listing all old/done tasks\n");
