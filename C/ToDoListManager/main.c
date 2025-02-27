@@ -37,8 +37,6 @@ void append(struct Node** head, char* name) {
     temp->next = newTaks;
 }
 
-
-
 int main(void){
     // Initialize the list of tasks or read it (depends if it's already saved)
     //int numTasks = getNumberTasks();
