@@ -3,32 +3,54 @@
 #include <string.h>
 #include <stdlib.h>
 
-struct task {
-    char *name;
+struct Task {
+    char *name; // Defualt size of 1024
     int done;
+    struct Task *next;
 };
 
-void removeNulls(char* str) {
-    int i, j = 0;
-    for (i = 0; str[i] != '\0'; i++) {
-        if (str[i] != '\0') {
-            str[j++] = str[i];  // Shift non-null characters to the left
-        }
+int getNumberTasks() {
+    return 0;
+}
+
+struct Task *getTasksArray() {
+    // First Version - creates a new array each time.
+    return NULL;
+}
+
+// LinkedList functions
+void append(struct Node** head, char* name) {
+    struct Task* newTaks = malloc(sizeof(struct Task));
+    newTaks->name = name;
+    newTaks->done = 0;
+    newTaks->next = NULL;
+
+    if (*head == NULL) {
+        *head = newTaks;
+        return;
     }
-    str[j] = '\0';  // Make sure to end the modified string with a null terminator
+    
+    struct Task* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newTaks;
 }
 
 
 
 int main(void){
-    // Code
+    // Initialize the list of tasks or read it (depends if it's already saved)
+    //int numTasks = getNumberTasks();
+    struct Task *head = getTasksArray();
+    
     printf("Welcome to a simple To Do List Manager\n");
     printf("Commands:\n");
     printf("add <task>: Add a new task to the list\n");
     printf("remove <task number>: Delete a task from the list\n");
     printf("done <task number>: Put the task in the group of done taks\n");
     printf("list: List all active tasks\n");
-    printf("listold: List all old/done tasks\n");
+    //printf("listold: List all old/done tasks\n");
     printf("exit: Exit the program\n");
     printf("Please enter a command:\n");
 
