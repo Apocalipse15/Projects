@@ -40,24 +40,50 @@ void append(struct Task** head, char* name) {
 void removeNode(struct Task **head, char* name) {
     struct Task *temp = *head, *prev = NULL;
 
-    if (temp != NULL && temp->name == name) {
+    name[strcspn(name, "\n")] = 0;
+
+    if (temp != NULL && strcmp(temp->name, name)) {
         *head = temp->next;
         free(temp);
         return;
     }
 
-    while (temp != NULL && temp->name != name) {
+    while (temp != NULL && strcmp(temp->name, name)) {
         prev = temp;
         temp = temp->next;
     }
 
     if (temp == NULL) {
-        printf("Value %d not found in the list.\n", name);
+        printf("Value %s not found in the list.\n", name);
         return;
     }
+    printf("tá aqui");
 
     // Unlink the node from the list
     prev->next = temp->next;
+    free(temp);
+}
+
+void doneTask(struct Task **head, char* name){
+    struct Task *temp = *head;
+    name[strcspn(name, "\n")] = 0;
+
+    if (temp != NULL && strcmp(temp->name, name)) {
+        temp->done = 1;
+        free(temp);
+        return;
+    }
+
+    while (temp != NULL && strcmp(temp->name, name)) {
+        temp = temp->next;
+    }
+
+    if (temp == NULL) {
+        printf("Value %s not found in the list.\n", name);
+        return;
+    }
+
+    temp->done = 1;
     free(temp);
 }
 
@@ -69,10 +95,9 @@ int main(void){
     printf("Welcome to a simple To Do List Manager\n");
     printf("Commands:\n");
     printf("add <task>: Add a new task to the list\n");
-    printf("remove <task number>: Delete a task from the list\n");
-    printf("done <task number>: Put the task in the group of done taks\n");
-    printf("list: List all active tasks\n");
-    //printf("listold: List all old/done tasks\n");
+    printf("remove <task name>: Delete a task from the list\n");
+    printf("done <task name>: Put the task in the group of done taks\n");
+    printf("list: List all tasks\n");
     printf("exit: Exit the program\n");
     printf("Please enter a command:\n");
 
@@ -83,16 +108,9 @@ int main(void){
         strcpy(command, buffer);
         
         char *firstWord = strtok(buffer, " ,.!?");
-
-        if (firstWord != NULL) { 
-            printf("The first word is: %s\n", firstWord); 
-        } else { 
-            printf("No word found.\n"); 
-        }
         
         if (strcmp(firstWord, "add") == 0) {
-            printf("Adding a new task\n");
-            printf("The task is: %s\n", command + strlen(firstWord) + 1);
+            printf("Adding task: %s\n", command + strlen(firstWord) + 1);
             append(&head, command + strlen(firstWord) + 1);
         }
         else if (strcmp(firstWord, "remove") == 0) {
@@ -101,6 +119,7 @@ int main(void){
         }
         else if (strcmp(firstWord, "done") == 0) {
             printf("Marking a task as done\n");
+            doneTask(&head, command + strlen(firstWord) + 1);
         }
         else if (strcmp(firstWord, "list\n") == 0) {
             printf("Listing all active tasks\n");
@@ -108,12 +127,8 @@ int main(void){
             while (temp) {
                 printf("Name: %s", temp->name);
                 printf("Done: %d\n", temp->done);
-                printf("---------------------------------\n");
                 temp = temp->next;
             }
-        }
-        else if (strcmp(firstWord, "listold") == 0) {
-            printf("Listing all old/done tasks\n");
         }
         else if (strcmp(firstWord, "exit") == 0) {
             printf("Exiting the program\n");
@@ -124,7 +139,6 @@ int main(void){
         }
 
         free(buffer);
-        
     }
 
 
